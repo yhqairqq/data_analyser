@@ -14,6 +14,10 @@ send_headers = {
         'Referer':'http://lbs.amap.com/fn/iframe/?id=3556',
 }
 
+
+
+
+
 def getDataWithEx(url):
     req = urllib2.Request(url,headers=send_headers)
     r = urllib2.urlopen(req,timeout=30)

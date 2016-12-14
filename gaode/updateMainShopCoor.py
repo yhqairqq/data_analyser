@@ -4,13 +4,20 @@
 import pymongo
 import datetime
 from bson.objectid import ObjectId
-def updateCreateTime(db):
-    page_size = 10000
+from MapService import *
+def updateOpenhours(db):
+    page_size = 1000
     i = 1.0
     last_row_id = ''
-    content = db.MainShop_DataOrigin_Unionpay.find(
+    content = db.MainShop5.find(
+        filter={
+            'openingHours':[]
+        }
     ).sort('_id', pymongo.ASCENDING).limit(page_size)
-    count = db.MainShop_DataOrigin_Unionpay.find(
+    count = db.MainShop5.find(
+         filter={
+           'openingHours':[]
+        }
     ).sort('_id', pymongo.ASCENDING).count()
 
     print 'totalSize:', count
@@ -28,19 +35,18 @@ def updateCreateTime(db):
             if i % 10000 == 0:
                 print "完成>>>>%.2f" % (i / count * 100), "%"
             try:
-                date_time = datetime.datetime.utcnow()
-                result = db.MainShop_DataOrigin_Unionpay.update_one({'_id':json[u'_id']},{'$set':{"createAt":date_time,"updateAt":date_time}},True)
-                if result.matched_count > 0:
-                    if i%1000==0:
-                      print '更新成功',json[u'_id']
+
+
+                print ""
 
             except Exception, e:
                 print e, "Exception",json[u'_id']
 
         if last_row_id != '':
-            content = db.MainShop_DataOrigin_Unionpay.find(
+            content = db.MainShop5.find(
                 filter={
-                    '_id': {'$gt': ObjectId(last_row_id)}
+                    '_id': {'$gt': ObjectId(last_row_id)},
+                    'openingHours':[]
                     # 任意元素匹配所有条件
                 }
             ).sort('_id', pymongo.ASCENDING).limit(page_size)
@@ -50,11 +56,11 @@ def updateCreateTime(db):
             exit(1);
 if __name__ == '__main__':
     # conn = pymongo.MongoClient('127.0.0.1', 33332)
-    conn = pymongo.MongoClient('10.15.159.169', 30000)
+    conn = pymongo.MongoClient('10.15.86.90', 30000)
     # 连接数据库
-    db = conn.crawl_hz
-    updateCreateTime(db)
+    db = conn.crawl
+    updateOpenhours(db)
 
-    # timeStr = u'800---22:00'
-    # # print deepExtractTimeList(timeStr)
+    # timeStr = u'90021:00'
+    # print deepExtractTimeList(timeStr)
     # print  getOpenHour(timeStr)
